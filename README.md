@@ -1,177 +1,174 @@
-# project
-# Auto detect text files and perform LF normalization
-* text=auto
-$ git init
-package com.jihi.contact_project_v5.controller;
+# 📁 프로젝트 포트폴리오
 
-import com.jihi.contact_project_v5.projection.ContactProjection;
-import com.jihi.contact_project_v5.repository.ContactRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+**빅데이터 기반 AI(인공지능) 서비스 (추천, 트레이딩) 개발자 취업캠프**에서 수행한 프로젝트들을 정리한 문서입니다.
 
-import java.util.List;
+---
 
-@Slf4j
-@Controller
-public class ContactController {
-    @Autowired
-    private ContactRepository memberRepository;
+## 🔖 목차
 
-    @GetMapping("/")
-    public String contacts(Model model) {
-        List<ContactProjection> contacts = this.memberRepository.getAllContacts();
-        for (ContactProjection contact: contacts) {
-            log.warn(contact.getName());
-        }
-        model.addAttribute("contacts", contacts);
-        return "contacts";
-    }
-}
-package com.jihi.contact_project_v5.model.entity;
+- [1. 배열 실습 문제](#1-배열-실습-문제)
+- [2. 컬렉션 실습 문제](#2-컬렉션-실습-문제)
+- [3. HashMap을 이용한 연락처 관리 프로그램](#3-hashmap을-이용한-연락처-관리-프로그램)
+- [4. 데이터베이스 1차 실습문제](#4-데이터베이스-1차-실습문제)
+- [5. 데이터베이스 2차 실습문제](#5-데이터베이스-2차-실습문제)
+- [6. MySQL DB를 이용한 연락처 관리 프로그램](#6-mysql-db를-이용한-연락처-관리-프로그램)
+- [7. MVC 패턴을 적용한 연락처 관리 프로그램](#7-mvc-패턴을-적용한-연락처-관리-프로그램)
+- [8. Spring 기반 웹 연락처 관리 프로그램](#8-spring-기반-웹-연락처-관리-프로그램)
+- [9. 웹 크롤링 및 인공지능](#9-웹-크롤링-및-인공지능)
+- [10. 머신러닝 및 딥러닝 실습](#10-머신러닝-및-딥러닝-실습)
+- [ 정리 및 회고](#-정리-및-회고)
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+---
 
-@Entity
-@Table(name="members_contacts")
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-public class ContactEntity {
-    @Id
-    @Column(name="memberid")
-    private String id;
+## 1. 배열 실습 문제
 
-    @Column(name="name")
-    private String name;
+**기술 스택**: Java (Eclipse 2024-03)
 
-    @Column(name="address")
-    private String address;
+### 주요 내용
+- 배열 생성, 최소/최대값 탐색 알고리즘 구현
+- 배열 합계, 평균 계산
+- 오름차순/내림차순 정렬 및 특정 값 탐색 알고리즘
 
-    @Column(name="phone")
-    private String phoneNumber;
+### 성과
+- 배열을 통한 데이터 처리 기초 습득
+- 순차 탐색 및 정렬 알고리즘의 원리 이해
 
-    @Column(name="moimname")
-    private String relationship;
-}
-package com.jihi.contact_project_v5.projection;
+---
 
-public interface ContactProjection {
-    String getMemberid();
-    String getName();
-    String getPhone();
-    String getAddress();
-    String getMoimname();
-}
-package com.jihi.contact_project_v5.repository;
+## 2. 컬렉션 실습 문제
 
-import com.jihi.contact_project_v5.model.entity.ContactEntity;
-import com.jihi.contact_project_v5.projection.ContactProjection;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+**기술 스택**: Java, ArrayList, HashMap
 
-import java.util.List;
+### 주요 내용
+- `ArrayList`: 순차 데이터 추가, 삭제, 검색 기능 구현  
+- `HashMap`: 연락처 관리 (이름 → 전화번호) 기능 구현
 
-@Repository
-public interface ContactRepository extends CrudRepository<ContactEntity, Integer> {
-    final String GET_ALL_CONTACTS =
-            "with contacts as ( " +
-                    "select mc.contactid, " +
-                    "   mc.name, " +
-                    "   mc.phone, " +
-                    "   mc.address, " +
-                    "   m.moimname  " +
-                    "  from memberscontacts mc " +
-                    " inner join moim m " +
-                    "  on mc.moimid = m.moimid " +
-                    "),  " +
-                    "map_contacts as ( " +
-                    "select m.memberid, " +
-                    "   c.name, " +
-                    "   c.phone, " +
-                    "   c.address, " +
-                    "   c.moimname " +
-                    "from membercontactmap m " +
-                    "   inner join contacts c " +
-                    "      on m.contactid = c.contactid " +
-                    "), " +
-                    "members_contacts as ( " +
-                    "select m.memberid, " +
-                    "   mc.name, " +
-                    "   mc.phone, " +
-                    "   mc.address, " +
-                    "   mc.moimname " +
-                    "  from member m " +
-                    " inner join map_contacts mc " +
-                    " on m.memberid = mc.memberid " +
-                    ")" +
-                    "select *" +
-                    "  from members_contacts";
-    @Query(value = GET_ALL_CONTACTS, nativeQuery = true)
-    List<ContactProjection> getAllContacts();
-}
-package com.jihi.contact_project_v5;
+### 성과
+- 컬렉션 자료구조의 활용법 습득  
+- 실제 애플리케이션에 적합한 자료구조 선택 능력 향상
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+---
 
-@SpringBootApplication
-public class ContactProjectV5Application {
+## 3. HashMap을 이용한 연락처 관리 프로그램
 
-	public static void main(String[] args) {
-		SpringApplication.run(ContactProjectV5Application.class, args);
-	}
+**기술 스택**: Java, HashMap, Scanner
 
-}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>연락처</title>
-</head>
-<body>
-<h1>연락처</h1>
-<table border="1">
-    <thead>
-    <tr>
-        <th>이름</th>
-        <th>번호</th>
-        <th>주소</th>
-        <th>관계</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        {{#contacts}}
-            <th>{{name}}</th>
-            <th>{{phone}}</th>
-            <th>{{address}}</th>
-            <th>{{moimname}}</th>
-        {{/contacts}}
-    </tr>
-    </tbody>
+### 주요 기능
+- 연락처 추가/수정/삭제/조회  
+- 사용자 메뉴 및 입력 처리
 
-</table>
-</body>
-</html>
-spring.application.name=contact-project-v5
-server.servlet.encoding.force=true
-# MySQL Database ??
-spring.datasource.url=jdbc:mysql://localhost:3306/contact?serverTimezone=UTC&characterEncoding=UTF-8
-spring.datasource.username=root
-spring.datasource.password=doitmysql
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+### 성과
+- 단일 클래스 기반의 CRUD 로직 설계 능력 배양  
+- HashMap을 이용한 효율적 키-값 데이터 구조 학습
 
-# JPA ??
-spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
-spring.jpa.hibernate.ddl-auto=none
-spring.jpa.properties.hibernate.format_sql=true
-spring.jpa.show-sql=true
-(master)
+---
+
+## 4. 데이터베이스 1차 실습문제
+
+**기술 스택**: MySQL 8.0.17, DBeaver
+
+### 분석 내용
+- 매장별/월별 매출 분석  
+- 특정 배우의 매출 기여도  
+- 대여 서비스 속도, VIP 고객 분석 등
+
+### 성과
+- SQL 기반 데이터 분석 능력 향상  
+- 실무형 분석 쿼리 작성 능력 습득
+
+---
+
+## 5. 데이터베이스 2차 실습문제
+
+**기술 스택**: MySQL, SQL (순위 함수, JOIN, GROUP BY 등)
+
+### 분석 내용
+- 배우 출연 횟수 및 인기 순위  
+- 고객별/직원별 대여 건수 순위  
+- 월별 수익 순위, 영화별 대여 수익 등
+
+### 성과
+- 윈도우 함수 및 순위 함수(RANK, DENSE_RANK 등) 실전 활용  
+- 마케팅 및 운영 전략 도출 기반 분석 역량 강화
+
+---
+
+## 6. MySQL DB를 이용한 연락처 관리 프로그램
+
+**기술 스택**: Java, JDBC, MySQL, ArrayList
+
+### 주요 기능
+- 연락처 정보 DB에 저장  
+- 연락처 추가/조회/수정/삭제 기능  
+- 콘솔 기반 사용자 인터페이스
+
+### 성과
+- JDBC를 통한 DB 연동 실습  
+- Java-MySQL 연동 전반에 대한 이해도 향상
+
+---
+
+## 7. MVC 패턴을 적용한 연락처 관리 프로그램
+
+**기술 스택**: Java, MySQL, JDBC, MVC 패턴
+
+### 구성 요소
+- **Model**: DB 연동 및 비즈니스 로직  
+- **View**: 사용자 입력/출력 처리  
+- **Controller**: 요청 흐름 제어
+
+### 성과
+- MVC 구조를 통한 유지보수성 향상  
+- 소프트웨어 설계 패턴에 대한 실무 적용 경험
+
+---
+
+## 8. Spring 기반 웹 연락처 관리 프로그램
+
+**기술 스택**: Spring Boot, Java, MySQL, IntelliJ
+
+### 주요 기능
+- 회원가입/로그인 기능 구현 (Session 기반 인증)  
+- 개인별 연락처 CRUD 기능  
+- 웹 UI를 통한 데이터 관리
+
+### 성과
+- Spring 프레임워크를 이용한 웹 백엔드 구축 경험  
+- 사용자 인증 및 REST 기반 데이터 처리 실습
+
+---
+
+## 9. 웹 크롤링 및 인공지능
+
+**기술 스택**: Python, BeautifulSoup, Selenium, Pandas
+
+### 주요 내용
+- 웹 데이터 크롤링 (뉴스, 쇼핑몰 등)  
+- 수집 데이터 전처리 및 정제  
+- 간단한 자연어처리 기반 분석
+
+### 성과
+- 웹 자동화 및 데이터 수집 경험  
+- AI 프로젝트를 위한 데이터 확보 기술 습득
+
+---
+
+## 10. 머신러닝 및 딥러닝 실습
+
+**기술 스택**: Python, scikit-learn, TensorFlow, Keras
+
+### 주요 모델
+- 분류/회귀 모델 (의사결정나무, SVM, KNN 등)  
+- 딥러닝 모델 (MLP, CNN, LSTM 등)
+
+### 성과
+- 학습 데이터셋을 기반으로 모델 학습 및 성능 평가  
+- AI 모델링 전 과정에 대한 실무 이해도 확보
+
+---
+
+## 정리 및 회고
+
+이 과정을 통해 **Java 기반 백엔드 개발 능력**, **SQL 데이터 분석 역량**, **웹 개발 경험**, **AI/머신러닝 기초**를 두루 갖추게 되었으며,  
+실무에서 바로 활용 가능한 다양한 프로젝트를 수행해보며 전처리와 튜닝의 중요성에 대해 알게 되었다.
+
